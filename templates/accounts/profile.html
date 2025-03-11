@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block page_title %}Dashboard - HelpMaster{% endblock %}
+
+{% block extra_head %}
+<style>
+.dark-section {
+  background-color: #1e1e1e;
+  border: 1px solid #343a40;
+  color: #fff;
+  padding: 1rem;
+}
+.dark-section h4 {
+  color: #fff;
+}
+.dark-section ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+}
+.btn-group-custom {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <!-- Profile Header -->
+  <div class="row mb-4">
+    <div class="col text-center">
+      <h2 class="fw-bold">Welcome, {{ user.username }}!</h2>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Plan Status Card -->
+    <div class="col-md-6">
+      <div class="p-4 dark-section h-100">
+        <h4 class="mb-3">Your Plan</h4>
+        {% if user.profile.premium_member %}
+          <p><strong>Plan Status:</strong> <span class="badge bg-success">Active</span></p>
+          <p>Thank you for choosing our Premium Package!</p>
+        {% else %}
+          <p><strong>Plan Status:</strong> <span class="badge bg-danger">Not Active</span></p>
+          <p class="mb-3">Unlock our Premium Package for Master's students, which includes:</p>
+          <ul>
+            <li>Free assignment creation for all subjects (before deadline)</li>
+            <li>Highest mark guaranteed — no fail policy</li>
+            <li>AI-driven job application support</li>
+            <li>24/7 priority support</li>
+          </ul>
+          <a href="/payments/upgrade/" class="btn btn-warning w-100 mt-3">Upgrade Now</a>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Assignments Card -->
+    <div class="col-md-6">
+      <div class="p-4 dark-section h-100">
+        <h4 class="mb-3">Assignments</h4>
+        <p>
+          Our expert team provides high-quality assignment support with a no-fail policy, ensuring you always achieve top marks.
+          Submit your assignments with your chosen deadline and let us help you excel.
+        </p>
+        <p>Ready to submit an assignment?</p>
+        {% if user.profile.premium_member %}
+          <a href="/assignments/submit/" class="btn btn-info w-100 mb-2 hover-effect">Submit Assignment</a>
+        {% else %}
+          <a href="#" class="btn btn-info w-100 mb-2 hover-effect" data-bs-toggle="modal" data-bs-target="#upgradeModal">Submit Assignment</a>
+        {% endif %}
+        <a href="/assignments/list/" class="btn btn-outline-light w-100 hover-effect">View My Assignments</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4 mt-4">
+    <!-- CV & AI Job Assistance Card -->
+    <div class="col-md-6">
+      <div class="p-4 dark-section h-100">
+        <h4 class="mb-3">CV & AI Job Assistance</h4>
+        <p>
+          Upload your CV and let our AI system automatically apply for part-time jobs on your behalf.
+          You can view the immediate auto-applied results or check all your applications later.
+        </p>
+        {% if user.profile.premium_member %}
+          <a href="/jobs/upload/" class="btn btn-secondary w-100 mb-2 hover-effect">Upload CV</a>
+        {% else %}
+          <a href="#" class="btn btn-secondary w-100 mb-2 hover-effect" data-bs-toggle="modal" data-bs-target="#upgradeModal">Upload CV</a>
+        {% endif %}
+        <div class="btn-group-custom">
+          <a href="/jobs/results/" class="btn btn-outline-light w-100 hover-effect">View Auto-Applied Results</a>
+          <a href="/jobs/list/" class="btn btn-outline-light w-100 hover-effect">View All Job Applications</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Account Management Card -->
+    <div class="col-md-6">
+      <div class="p-4 dark-section h-100">
+        <h4 class="mb-3">Account Management</h4>
+        <p>Manage your account settings and stay updated on your premium benefits.</p>
+        <div class="d-grid gap-2">
+          <a href="{% url 'logout' %}" class="btn btn-danger hover-effect">Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- New Section: Non-Premium Assignment Service -->
+  <div class="row g-4 mt-4">
+    <div class="col-md-12">
+      <div class="p-4 dark-section h-100">
+        <h4 class="mb-3">Non-Premium Assignment Service</h4>
+        <p>
+          If you are not upgraded, you can still get top-quality assignment help for a flat fee of <strong>£39 per assignment</strong>.
+          Click below to proceed with a one-time payment and submit your assignment.
+        </p>
+        <a href="/assignments/pay-per-assignment/" class="btn btn-warning w-100 hover-effect">
+          Pay £39 &amp; Submit Assignment
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Upgrade Modal (for non-premium users) -->
+<div class="modal fade" id="upgradeModal" tabindex="-1" aria-labelledby="upgradeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-dark text-white">
+      <div class="modal-header">
+        <h5 class="modal-title" id="upgradeModalLabel">Upgrade Required</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>This feature is available only for Premium members. Please upgrade your plan to continue.</p>
+      </div>
+      <div class="modal-footer">
+        <a href="/payments/upgrade/" class="btn btn-warning">Upgrade Now</a>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

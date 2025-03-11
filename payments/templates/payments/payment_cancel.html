@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block page_title %}Payment Canceled{% endblock %}
+{% block content %}
+<div class="card dark-card mx-auto" style="max-width: 600px;">
+  <div class="card-body text-center">
+    <h2 class="card-title">Payment Canceled</h2>
+    <p>You have canceled the payment. Your account remains non-premium.</p>
+    <a href="/payments/upgrade/" class="btn btn-outline-warning hover-effect">Try Again</a>
+  </div>
+</div>
+{% endblock %}

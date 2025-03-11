@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block page_title %}Upload Your CV - helpmaster{% endblock %}
+
+{% block extra_head %}
+<style>
+.dark-card {
+  background-color: #1e1e1e;
+  border: 1px solid #343a40;
+  color: #fff;
+}
+.dark-card h2 {
+  color: #fff;
+}
+/* Dark input fields */
+.form-control.dark-input {
+  background-color: #2b2b2b;
+  color: #fff;
+  border: 1px solid #444;
+}
+.form-control.dark-input::placeholder {
+  color: #aaa;
+}
+/* If Django outputs error messages, ensure they're visible */
+.errorlist li {
+  color: #ff7777;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card dark-card mx-auto" style="max-width: 700px;">
+  <div class="card-body">
+    <h2 class="card-title text-center">Upload Your CV</h2>
+    <p class="mb-4">
+      Our AI system will automatically apply for part-time jobs on your behalf.
+      Provide your preferred postcode (or location) and select the roles you're interested in. 
+      Then upload your CV, and we’ll handle the rest!
+    </p>
+
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <!-- Postcode or Location Field -->
+      <div class="mb-3">
+        <label for="id_postcode" class="form-label">Preferred Postcode or Location</label>
+        <input type="text" name="postcode" id="id_postcode" class="form-control dark-input" placeholder="E.g. SW1A 1AA or London" required>
+      </div>
+
+      <!-- Part-Time Roles Field (multi-select) -->
+      <div class="mb-3">
+        <label for="id_roles" class="form-label">Part-Time Roles of Interest</label>
+        <select name="roles[]" id="id_roles" multiple class="form-control dark-input">
+          <option value="Retail">Retail</option>
+          <option value="Hospitality">Hospitality</option>
+          <option value="Tutoring">Tutoring</option>
+          <option value="Customer Service">Customer Service</option>
+          <option value="Delivery Driver">Delivery Driver</option>
+          <option value="Administrative">Administrative</option>
+          <option value="IT Support">IT Support</option>
+          <option value="Food Service">Food Service</option>
+          <option value="Sales Assistant">Sales Assistant</option>
+        </select>
+        <small class="text-muted">Hold Ctrl (Windows) or Command (Mac) to select multiple roles.</small>
+      </div>
+
+      <!-- CV File Upload -->
+      <div class="mb-3">
+        <label for="id_cv" class="form-label">Choose CV File (PDF or DOCX)</label>
+        <input type="file" name="cv" id="id_cv" class="form-control dark-input" required>
+      </div>
+
+      <button type="submit" class="btn btn-success w-100 hover-effect mb-2">Upload CV</button>
+    </form>
+
+    <p class="text-center mb-2">
+      <a href="{% url 'job_list' %}" class="btn btn-outline-light hover-effect">View Your Job Applications</a>
+    </p>
+
+    {% if not user.profile.premium_member %}
+      <div class="alert alert-warning mt-4" style="background-color: #343a40; color: #ffc107;">
+        <strong>Upgrade to Premium:</strong> Enjoy advanced AI job application support,
+        priority service, and more.
+        <a href="/payments/upgrade/" class="btn btn-warning btn-sm hover-effect">Upgrade Now</a>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

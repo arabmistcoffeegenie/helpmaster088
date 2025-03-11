@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+{% load static %}
+{% block page_title %}Welcome to HelpMaster{% endblock %}
+{% block extra_head %}
+<!-- Include Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<style>
+  /* Global Styles */
+  body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  }
+  a {
+    text-decoration: none;
+  }
+  /* Hero Section with gradient overlay */
+  .hero {
+    position: relative;
+    background: url('{% static "images/hero-bg.jpg" %}') no-repeat center center;
+    background-size: cover;
+    padding: 120px 0;
+    color: #fff;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: linear-gradient(to bottom right, rgba(0,0,0,0.6), rgba(0,0,0,0.3));
+    z-index: 1;
+  }
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    animation: fadeInDown 1s ease-out;
+  }
+  @keyframes fadeInDown {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .hero-content h1 {
+    font-size: 3.8rem;
+    font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+  }
+  .hero-content p.lead {
+    font-size: 1.4rem;
+    margin-bottom: 2rem;
+  }
+
+  /* Section Containers */
+  .section {
+    padding: 60px 0;
+  }
+
+  /* Services Section */
+  .services-section {
+    background-color: #111;
+  }
+  .services-section h2 {
+    color: #fff;
+    margin-bottom: 2rem;
+  }
+  .service-icon {
+    font-size: 3rem;
+    color: #ffd700;
+    transition: transform 0.3s;
+  }
+  .service-icon:hover {
+    transform: scale(1.2);
+    color: #ffc107;
+  }
+  .services-section h4 {
+    color: #ffd700;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+  }
+  .services-section p {
+    color: #ccc;
+  }
+
+  /* Dark Section (for Premium, Assignments, etc.) */
+  .dark-section {
+    background-color: #1e1e1e;
+    border: 1px solid #343a40;
+    color: #fff;
+    padding: 2rem;
+    transition: transform 0.3s, box-shadow 0.3s;
+    border-radius: 8px;
+  }
+  .dark-section:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+  }
+  .dark-section h4 {
+    color: #ffd700;
+    margin-bottom: 1rem;
+  }
+  .dark-section ul {
+    list-style-type: disc;
+    padding-left: 1.5rem;
+    color: #ccc;
+  }
+  .dark-section ul li {
+    margin-bottom: 0.5rem;
+  }
+  .dark-section .btn-warning {
+    background-color: #ffc107;
+    border: none;
+  }
+  .dark-section .btn-warning:hover {
+    background-color: #ffcd39;
+  }
+
+  /* Why Choose Section */
+  .why-choose {
+    background-color: #111;
+    padding: 60px 0;
+  }
+  .why-choose h2 {
+    color: #fff;
+    margin-bottom: 2rem;
+  }
+  .why-choose h5 {
+    color: #ffd700;
+    margin-top: 1rem;
+  }
+  .why-choose p {
+    color: #ccc;
+  }
+
+  /* Hover effect on general buttons */
+  .hover-effect:hover {
+    filter: brightness(1.2);
+    transition: filter 0.3s;
+  }
+</style>
+{% endblock %}
+{% block content %}
+<!-- Hero Section -->
+<div class="hero">
+  <div class="container hero-content">
+    <h1 class="display-1">Welcome to HelpMaster</h1>
+    <p class="lead">Your all-in-one solution for academic and job support.</p>
+    <div class="d-flex justify-content-center flex-wrap">
+      <a class="btn btn-primary btn-lg hover-effect m-2" href="/accounts/register/" role="button">Get Started</a>
+      <a class="btn btn-success btn-lg hover-effect m-2" href="/accounts/login/" role="button">Login</a>
+    </div>
+  </div>
+</div>
+
+<!-- Services Section -->
+<div class="services-section section text-center">
+  <div class="container">
+    <h2>Our Services</h2>
+    <div class="row">
+      <div class="col-md-4 mb-4">
+        <i class="bi bi-pencil-square service-icon"></i>
+        <h4>Assignment Help</h4>
+        <p>Get your assignments with a no-fail policy, ensuring top marks in your studies.</p>
+      </div>
+      <div class="col-md-4 mb-4">
+        <i class="bi bi-briefcase service-icon"></i>
+        <h4>Job Assistance</h4>
+        <p>AI-powered system to find and apply for part-time jobs that suit you.</p>
+      </div>
+      <div class="col-md-4 mb-4">
+        <i class="bi bi-award service-icon"></i>
+        <h4>Premium Features</h4>
+        <p>Unlock exclusive tools, resources, and personalized support.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Premium Package Section -->
+<div class="premium-section section">
+  <div class="container">
+    <h2 class="text-center text-white mb-4">Premium Package for Master Students</h2>
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="dark-section hover-effect">
+          <h4>Master's Premium</h4>
+          <p>Our premium plan is tailor-made for master's students, offering:</p>
+          <ul>
+            <li><strong>Unlimited assignment help</strong> throughout your entire Master’s degree</li>
+            <li><strong>AI-driven job applications</strong> targeting your preferred location</li>
+            <li><strong>Personalized 24/7 support</strong> from subject experts</li>
+            <li><strong>Highest mark guarantee</strong> – no fail, no stress!</li>
+            <li><strong>Exclusive webinars & resources</strong> to boost your academic performance</li>
+          </ul>
+          <p class="fw-bold fs-5">Only £100 for a full master’s degree!</p>
+          <a href="/payments/upgrade/" class="btn btn-warning w-100 hover-effect">Upgrade Now</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Why Choose HelpMaster Section -->
+<div class="why-choose section">
+  <div class="container">
+    <h2 class="text-center">Why Choose HelpMaster?</h2>
+    <div class="row mt-5">
+      <div class="col-md-6">
+        <h5>Expert Guidance</h5>
+        <p>Our team of professionals provides top-notch assignment help and career advice.</p>
+        <h5>AI-Powered Solutions</h5>
+        <p>Our system automatically searches and applies for relevant part-time jobs, saving you time.</p>
+      </div>
+      <div class="col-md-6">
+        <h5>Flexible & Accessible</h5>
+        <p>Access our services anytime, anywhere, and manage your academic and work life effortlessly.</p>
+        <h5>Trusted by Thousands</h5>
+        <p>Join our community of satisfied students who have achieved academic success and found fulfilling jobs.</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block page_title %}Payment Successful{% endblock %}
+
+{% block content %}
+<div class="container my-5 text-center">
+  <h2 class="mb-3">Payment Successful!</h2>
+  <p>Your payment has been received and your assignment has been submitted successfully.</p>
+  <a href="{% url 'assignment_list' %}" class="btn btn-primary">View My Assignments</a>
+</div>
+{% endblock %}

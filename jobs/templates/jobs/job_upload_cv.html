@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block page_title %}Upload Your CV{% endblock %}
+{% block content %}
+<div class="container my-5">
+  <h2 class="text-center">Upload Your CV for AI Job Applications</h2>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <!-- Optional: Add a postcode input field -->
+    <div class="mb-3">
+      <label for="id_postcode" class="form-label">Preferred Postcode or Location</label>
+      <input type="text" name="postcode" id="id_postcode" class="form-control" placeholder="London" required>
+    </div>
+    <button type="submit" class="btn btn-primary w-100">Upload CV</button>
+  </form>
+</div>
+{% endblock %}

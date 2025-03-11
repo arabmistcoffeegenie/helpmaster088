@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block page_title %}My Job Applications{% endblock %}
+{% block content %}
+<div class="container my-5">
+  <h2 class="text-center">My Job Applications</h2>
+  <table class="table table-dark table-striped">
+    <thead>
+      <tr>
+        <th>Job Title</th>
+        <th>Company</th>
+        <th>Application Date</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for app in job_apps %}
+      <tr>
+        <td>{{ app.job_title }}</td>
+        <td>{{ app.company }}</td>
+        <td>{{ app.application_date }}</td>
+        <td>{{ app.status }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

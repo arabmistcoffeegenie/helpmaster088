@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% load static %}
+{% block page_title %}Submit Assignment - HelpMaster{% endblock %}
+
+{% block extra_head %}
+<style>
+.dark-card {
+  background-color: #1e1e1e;
+  border: 1px solid #343a40;
+  color: #fff;
+}
+.dark-card h2 {
+  color: #fff;
+}
+/* Dark input fields */
+.form-control.dark-input {
+  background-color: #2b2b2b;
+  color: #fff;
+  border: 1px solid #444;
+}
+.form-control.dark-input::placeholder {
+  color: #aaa;
+}
+/* If Django outputs error messages, ensure they're visible */
+.errorlist li {
+  color: #ff7777;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card dark-card mx-auto" style="max-width: 700px;">
+  <div class="card-body">
+    <h2 class="card-title text-center">Submit Your Assignment</h2>
+
+    <!-- Note: enctype="multipart/form-data" is required for file uploads -->
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <!-- Title Field (optional; defaults if left blank) -->
+      <div class="mb-3">
+        <label for="id_title" class="form-label">Assignment Title</label>
+        <input type="text" name="title" id="id_title" class="form-control dark-input" placeholder="Enter a title (Mandatory-type assignment name )">
+      </div>
+
+      <!-- Degree Field with Datalist for Searching -->
+      <div class="mb-3">
+        <label for="id_degree" class="form-label">Select Your Master's Degree</label>
+        <input list="degreeList" name="degree" id="id_degree" class="form-control dark-input" placeholder="Search or pick a course..." required>
+        <datalist id="degreeList">
+          <option value="MSc Accounting and Financial Management">
+          <option value="MSc Advanced Clinical Practice">
+          <option value="MSc Advanced Computer Science">
+          <option value="MSc Advanced Paramedic Practice">
+          <option value="MSc Advanced Physiotherapy">
+          <option value="MSc Aerospace Engineering">
+          <option value="MSc Artificial Intelligence">
+          <option value="MSc Automotive Engineering">
+          <option value="MSc Business Analytics and Consultancy">
+          <option value="MSc Business Psychology">
+          <option value="MSc Civil Engineering">
+          <option value="MSc Computer Science">
+          <option value="MSc Cyber Security">
+          <option value="MSc Data Science">
+          <option value="MSc Digital Media Arts">
+          <option value="MSc Environmental Management">
+          <option value="MSc Environmental Management for Agriculture">
+          <option value="MSc Finance and Investment Banking">
+          <option value="MA Graphic Design">
+          <option value="MA History">
+          <option value="MSc Healthcare Management">
+          <option value="MSc Illustration">
+          <option value="MSc International Business">
+          <option value="MA Journalism and Media Communications">
+          <option value="LLM Commercial Law">
+          <option value="LLM Governance, Risk Management, and Compliance">
+          <option value="LLM International Commercial Law">
+          <option value="LLM International Human Rights Law">
+          <option value="MSc Management">
+          <option value="MSc Marketing">
+          <option value="MSc Mechanical Engineering">
+          <option value="MSc Molecular Biology">
+          <option value="MSc Music Production">
+          <option value="MSc Midwifery">
+          <option value="MSc Nursing (Mental Health, Adult, Child, and Learning Disabilities)">
+          <option value="MSc Pharmacology">
+          <option value="MSc Physics">
+          <option value="MSc Project Management">
+          <option value="MSc Psychology Conversion">
+          <option value="MSc Product Design">
+          <option value="MSc Robotics and Artificial Intelligence">
+          <option value="MSc Software Engineering">
+          <option value="MSc Sustainable Planning">
+          <option value="MSc Sustainable Planning and Transport">
+          <option value="MSc Social Work">
+          <option value="MSc Toxicology">
+          <option value="MSc Urban and Rural Planning">
+          <option value="MSc Water and Environmental Management">
+        </datalist>
+      </div>
+
+      <!-- Module Field as Free Text Input -->
+      <div class="mb-3">
+        <label for="id_module" class="form-label">Enter Module Name</label>
+        <input type="text" name="module" id="id_module" class="form-control dark-input" placeholder="Type your module name..." required>
+      </div>
+
+      <!-- File Upload for Assignment Brief -->
+      <div class="mb-3">
+        <label for="id_brief" class="form-label">Upload Assignment Brief</label>
+        <input type="file" name="brief" id="id_brief" class="form-control dark-input" required>
+      </div>
+
+      <!-- Additional Instructions (TextArea) -->
+      <div class="mb-3">
+        <label for="id_instructions" class="form-label">Additional Instructions (Optional)</label>
+        <textarea name="instructions" id="id_instructions" rows="4" class="form-control dark-input" placeholder="Add any extra details here..."></textarea>
+      </div>
+
+      <!-- Deadline Field (Date Picker) -->
+      <div class="mb-3">
+        <label for="id_deadline" class="form-label">Assignment Deadline</label>
+        <input type="date" name="deadline" id="id_deadline" class="form-control dark-input" required>
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit" class="btn btn-primary w-100 hover-effect">Submit Assignment</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

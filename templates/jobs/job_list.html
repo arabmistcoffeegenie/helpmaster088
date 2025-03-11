@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Job Applications - helpmaster{% endblock %}
+{% block content %}
+<h2 class="mb-4">Your Job Applications</h2>
+<div class="list-group">
+  {% for app in job_apps %}
+    <div class="list-group-item hover-effect">
+      <p>Uploaded on <strong>{{ app.created_at }}</strong></p>
+      <span class="badge bg-secondary">{{ app.status }}</span>
+    </div>
+  {% empty %}
+    <p>No job applications yet.</p>
+  {% endfor %}
+</div>
+{% endblock %}
