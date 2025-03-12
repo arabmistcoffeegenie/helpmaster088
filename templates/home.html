@@ -12,7 +12,8 @@
   a {
     text-decoration: none;
   }
-  /* Hero Section with gradient overlay */
+
+  /* Hero Section */
   .hero {
     position: relative;
     background: url('{% static "images/hero-bg.jpg" %}') no-repeat center center;
@@ -36,14 +37,8 @@
     animation: fadeInDown 1s ease-out;
   }
   @keyframes fadeInDown {
-    from {
-      opacity: 0;
-      transform: translateY(-20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
   }
   .hero-content h1 {
     font-size: 3.8rem;
@@ -55,18 +50,15 @@
     margin-bottom: 2rem;
   }
 
-  /* Section Containers */
-  .section {
-    padding: 60px 0;
-  }
-
   /* Services Section */
   .services-section {
     background-color: #111;
+    padding: 60px 0;
   }
   .services-section h2 {
     color: #fff;
     margin-bottom: 2rem;
+    text-align: center;
   }
   .service-icon {
     font-size: 3rem;
@@ -86,37 +78,32 @@
     color: #ccc;
   }
 
-  /* Dark Section (for Premium, Assignments, etc.) */
+  /* Premium Package Section */
+  .premium-section {
+    background-color: #222;
+    padding: 60px 0;
+  }
+  .premium-section h2 {
+    color: #fff;
+    text-align: center;
+    margin-bottom: 2rem;
+  }
   .dark-section {
     background-color: #1e1e1e;
     border: 1px solid #343a40;
     color: #fff;
     padding: 2rem;
-    transition: transform 0.3s, box-shadow 0.3s;
     border-radius: 8px;
+    transition: transform 0.3s, box-shadow 0.3s;
   }
   .dark-section:hover {
     transform: scale(1.02);
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
-  }
-  .dark-section h4 {
-    color: #ffd700;
-    margin-bottom: 1rem;
+    box-shadow: 0 0 20px rgba(255,215,0, 0.3);
   }
   .dark-section ul {
     list-style-type: disc;
     padding-left: 1.5rem;
     color: #ccc;
-  }
-  .dark-section ul li {
-    margin-bottom: 0.5rem;
-  }
-  .dark-section .btn-warning {
-    background-color: #ffc107;
-    border: none;
-  }
-  .dark-section .btn-warning:hover {
-    background-color: #ffcd39;
   }
 
   /* Why Choose Section */
@@ -127,6 +114,7 @@
   .why-choose h2 {
     color: #fff;
     margin-bottom: 2rem;
+    text-align: center;
   }
   .why-choose h5 {
     color: #ffd700;
@@ -136,7 +124,7 @@
     color: #ccc;
   }
 
-  /* Founder Section - Desktop */
+  /* Founder Section */
   .founder-section {
     background-color: #111;
     padding: 60px 0;
@@ -146,48 +134,87 @@
     margin-bottom: 2rem;
     text-align: center;
   }
-  .founder-img {
+  /* Desktop Layout */
+  .founder-desktop {
+    display: block;
+  }
+  .founder-desktop .founder-img {
     width: 200px;
     height: 200px;
     border-radius: 50%;
     object-fit: cover;
     border: 3px solid #ffd700;
-    margin: 0 auto;
+    margin: 0 auto 1rem auto;
     display: block;
   }
-  .founder-name {
+  .founder-desktop .founder-name {
     font-weight: bold;
     color: #fff;
+    text-align: center;
   }
-  .founder-section blockquote {
+  .founder-desktop .founder-credentials,
+  .founder-desktop blockquote {
+    text-align: center;
+    color: #ccc;
+  }
+  .founder-desktop blockquote p {
     font-style: italic;
     color: #ffc107;
   }
-
-  /* Founder Section - Mobile Adjustments */
-  @media (max-width: 576px) {
-    .founder-img {
-      width: 150px;
-      height: 150px;
+  /* Mobile Layout (Horizontal) */
+  .founder-mobile {
+    display: none;
+  }
+  @media (max-width: 767.98px) {
+    .founder-desktop {
+      display: none;
     }
-    .founder-section h2 {
-      font-size: 1.8rem;
+    .founder-mobile {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      border-bottom: 1px solid #444;
+      margin-bottom: 10px;
     }
-    .founder-name {
-      font-size: 1.4rem;
+    .founder-mobile img.founder-img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #ffd700;
+      margin-right: 10px;
     }
-    .founder-section blockquote {
-      font-size: 1rem;
+    .founder-mobile .founder-info {
+      flex: 1;
+    }
+    .founder-mobile .founder-name {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #fff;
+      margin: 0;
+    }
+    .founder-mobile .founder-credentials,
+    .founder-mobile .founder-quote {
+      font-size: 0.9rem;
+      margin: 0;
+      color: #ccc;
+    }
+    .founder-mobile .founder-quote {
+      font-style: italic;
+      color: #ffc107;
     }
   }
 
-  /* Hover effect on general buttons */
-  .hover-effect:hover {
-    filter: brightness(1.2);
-    transition: filter 0.3s;
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 20px 0;
+    color: #ccc;
+    background-color: #111;
   }
 </style>
 {% endblock %}
+
 {% block content %}
 <!-- Hero Section -->
 <div class="hero">
@@ -202,21 +229,21 @@
 </div>
 
 <!-- Services Section -->
-<div class="services-section section text-center">
+<div class="services-section">
   <div class="container">
     <h2>Our Services</h2>
     <div class="row">
-      <div class="col-md-4 mb-4">
+      <div class="col-md-4 mb-4 text-center">
         <i class="bi bi-pencil-square service-icon"></i>
         <h4>Assignment Help</h4>
         <p>Get your assignments with a no-fail policy, ensuring top marks in your studies.</p>
       </div>
-      <div class="col-md-4 mb-4">
+      <div class="col-md-4 mb-4 text-center">
         <i class="bi bi-briefcase service-icon"></i>
         <h4>Job Assistance</h4>
-        <p>AI-powered system to find and apply for part-time jobs that suit you.</p>
+        <p>Our AI-powered system helps you find and apply for part-time jobs that suit you.</p>
       </div>
-      <div class="col-md-4 mb-4">
+      <div class="col-md-4 mb-4 text-center">
         <i class="bi bi-award service-icon"></i>
         <h4>Premium Features</h4>
         <p>Unlock exclusive tools, resources, and personalized support.</p>
@@ -226,12 +253,12 @@
 </div>
 
 <!-- Premium Package Section -->
-<div class="premium-section section">
+<div class="premium-section">
   <div class="container">
-    <h2 class="text-center text-white mb-4">Premium Package for Master Students</h2>
+    <h2 class="text-white">Premium Package for Master Students</h2>
     <div class="row justify-content-center">
       <div class="col-md-6">
-        <div class="dark-section hover-effect">
+        <div class="dark-section">
           <h4>Master's Premium</h4>
           <p>Our premium plan is tailor-made for master's students, offering:</p>
           <ul>
@@ -241,7 +268,7 @@
             <li><strong>Highest mark guarantee</strong> – no fail, no stress!</li>
             <li><strong>Exclusive webinars & resources</strong> to boost your academic performance</li>
           </ul>
-          <p class="fw-bold fs-5">Only £100 for a full master’s degree!</p>
+          <p class="fw-bold">Only £100 for a full master’s degree!</p>
           <a href="/payments/upgrade/" class="btn btn-warning w-100 hover-effect">Upgrade Now</a>
         </div>
       </div>
@@ -250,9 +277,9 @@
 </div>
 
 <!-- Why Choose HelpMaster Section -->
-<div class="why-choose section">
+<div class="why-choose">
   <div class="container">
-    <h2 class="text-center">Why Choose HelpMaster?</h2>
+    <h2>Why Choose HelpMaster?</h2>
     <div class="row mt-5">
       <div class="col-md-6">
         <h5>Expert Guidance</h5>
@@ -271,29 +298,56 @@
 </div>
 
 <!-- Founder Section -->
-<div class="founder-section section">
+<div class="founder-section">
   <div class="container">
-    <h2 class="text-center">Meet Our Founder</h2>
-    <div class="row align-items-center">
-      <div class="col-md-4 text-center mb-4 mb-md-0">
-        <!-- Round image of founder -->
-        <img src="{% static 'images/founder.JPG' %}" 
-             alt="Founder Sufiyan Ahamed" 
-             class="founder-img">
-      </div>
-      <div class="col-md-8">
+    <h2>Meet Our Founders</h2>
+    <div class="row">
+      <!-- Desktop Layout -->
+      <div class="col-md-6 founder-desktop">
+        <div class="text-center mb-4">
+          <img src="{% static 'images/founder.JPG' %}" alt="Founder Sufiyan Ahamed" class="founder-img">
+        </div>
         <h3 class="founder-name">Sufiyan Ahamed</h3>
-        <p>MSc International Business with Advanced Research</p>
+        <p class="founder-credentials">MSc International Business with Advanced Research</p>
         <blockquote class="blockquote">
-          <p class="mb-0">"Strive for progress, not perfection."</p>
+          <p>"As the founder of HelpMaster, I bring students the best guidance and innovative resources to help them succeed. I encourage every student to use only reliable resources for a promising future."</p>
         </blockquote>
-        <p>
-          Our founder’s vision is to empower students academically and professionally. 
-          By blending top-notch assignment guidance with real-world job opportunities, 
-          HelpMaster helps you reach your fullest potential and stand out in a competitive marketplace.
-        </p>
+      </div>
+      <div class="col-md-6 founder-desktop">
+        <div class="text-center mb-4">
+          <img src="{% static 'images/cofounder.jpeg' %}" alt="Co-Founder Rizwan Munavvar" class="founder-img">
+        </div>
+        <h3 class="founder-name">Rizwan Munavvar</h3>
+        <p class="founder-credentials">MSc International Business with Advanced Research</p>
+        <blockquote class="blockquote">
+          <p>"As the co-founder, I urge students to leverage the best resources available and stay informed with the latest academic insights."</p>
+        </blockquote>
+      </div>
+      <!-- Mobile Layout -->
+      <div class="col-12 founder-mobile">
+        <img src="{% static 'images/founder.JPG' %}" alt="Founder Sufiyan Ahamed" class="founder-img">
+        <div class="founder-info">
+          <h3 class="founder-name">Sufiyan Ahamed</h3>
+          <p class="founder-credentials">MSc International Business with Advanced Research</p>
+          <p class="founder-quote">"As the founder, I bring the best guidance and innovative resources to help you succeed. Use only reliable resources for a promising future."</p>
+        </div>
+      </div>
+      <div class="col-12 founder-mobile">
+        <img src="{% static 'images/cofounder.jpeg' %}" alt="Co-Founder Rizwan Munavvar" class="founder-img">
+        <div class="founder-info">
+          <h3 class="founder-name">Rizwan Munavvar</h3>
+          <p class="founder-credentials">MSc International Business with Advanced Research</p>
+          <p class="founder-quote">"I urge students to leverage the best available resources and stay up-to-date with the latest academic insights."</p>
+        </div>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+  <div class="container">
+    <p>© 2025 HelpMaster. All rights reserved.</p>
   </div>
 </div>
 {% endblock %}
