@@ -12,7 +12,6 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "django-insecure-d@H%G9sL!eB3p2
 DEBUG = os.environ.get("DEBUG", "True") == "True"
 
 # Allowed hosts.
-# If the ALLOWED_HOSTS environment variable is not set, default to local addresses.
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "127.0.0.1,localhost,192.168.0.106").split(",")
 
 # CSRF Trusted Origins for custom domains (set via environment variable in production)
@@ -26,11 +25,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
     # Your apps
     'accounts',
     'assignments',
     'jobs',
     'payments',
+
+    # AWS Storage
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -49,8 +52,7 @@ ROOT_URLCONF = 'helpmaster.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        # Global templates folder
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],  # Global templates folder
         'APP_DIRS': True,  # Also looks for templates in app directories
         'OPTIONS': {
             'context_processors': [
@@ -68,7 +70,6 @@ WSGI_APPLICATION = 'helpmaster.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        # Using Path object for SQLite database
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
@@ -82,21 +83,28 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
+# ======= STATIC FILES CONFIGURATION =======
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    BASE_DIR / 'static',  # Your static files folder at the project root
-]
-STATIC_ROOT = BASE_DIR / 'staticfiles'  # Where static files are collected (for production)
+STATICFILES_DIRS = [BASE_DIR / 'static']  # Static files folder
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # Where static files are collected
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'  # WhiteNoise for static files
 
-# WhiteNoise static files storage setting for production
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# ======= AWS S3 MEDIA STORAGE CONFIGURATION =======
+AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME")
+AWS_S3_REGION_NAME = os.environ.get("AWS_S3_REGION_NAME", "us-east-1")  # Update based on your AWS region
 
-# Media files (e.g., user uploads like assignment briefs)
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+# Ensure AWS credentials exist before enabling S3 storage
+if AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY and AWS_STORAGE_BUCKET_NAME:
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+    MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
+else:
+    # If AWS is not configured, fallback to local storage (useful for development)
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = BASE_DIR / 'media'
 
-# Stripe API Keys
-# In production, load these from environment variables.
-STRIPE_PUBLISHABLE_KEY = os.environ.get("STRIPE_PUBLISHABLE_KEY", "pk_live_51QqxpCJdpJzxVZD9lOu4Lv9YotwZvKUapao29R9zvUAQchrQWqCgepv7e0plcxTgy2HESuwYi2DxEx0PguFgKK0x00WkiU99gh")
-STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY", "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")
+# ======= STRIPE API CONFIGURATION =======
+STRIPE_PUBLISHABLE_KEY = os.environ.get("STRIPE_PUBLISHABLE_KEY", "your-public-key")
+STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY", "your-secret-key")
