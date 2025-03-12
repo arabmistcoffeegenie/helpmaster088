@@ -1,27 +1,25 @@
 import os
 from pathlib import Path
-from dotenv import load_dotenv  # For local development only
-
-# Load environment variables from a local .env file if present
-load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# In production, this should be set as an environment variable.
-SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "django-insecure-default-secret-key")
+# In production, set the DJANGO_SECRET_KEY environment variable.
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "django-insecure-d@H%G9sL!eB3p2xF#Q8wJzR1t@k6v*Y4uM7nP0mC5qR8sT3vU")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG", "True").lower() in ["true", "1", "yes"]
+DEBUG = os.environ.get("DEBUG", "True") == "True"
 
-# Allowed hosts (set via environment variable in production)
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost,192.168.0.106").split(",")
+# Allowed hosts.
+# If the ALLOWED_HOSTS environment variable is not set, default to local addresses.
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "127.0.0.1,localhost,192.168.0.106").split(",")
 
-# CSRF Trusted Origins (if needed)
-CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",") if os.getenv("CSRF_TRUSTED_ORIGINS") else []
+# CSRF Trusted Origins for custom domains (set via environment variable in production)
+CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",") if os.environ.get("CSRF_TRUSTED_ORIGINS") else []
 
 INSTALLED_APPS = [
+    # Django default apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -33,13 +31,11 @@ INSTALLED_APPS = [
     'assignments',
     'jobs',
     'payments',
-    # Third-party app for AWS S3 integration
-    'storages',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # For serving static files in production
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # WhiteNoise for static file serving in production
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -53,8 +49,9 @@ ROOT_URLCONF = 'helpmaster.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],  # Global templates folder
-        'APP_DIRS': True,  # Also looks for templates inside app directories
+        # Global templates folder
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'APP_DIRS': True,  # Also looks for templates in app directories
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -71,11 +68,13 @@ WSGI_APPLICATION = 'helpmaster.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',  # SQLite database file
+        # Using Path object for SQLite database
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
-AUTH_PASSWORD_VALIDATORS = []  # Simplified validators for development
+# Simplified password validators for development.
+AUTH_PASSWORD_VALIDATORS = []
 
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
@@ -85,41 +84,19 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',  # Your static files folder at the project root
+]
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # Where static files are collected (for production)
+
+# WhiteNoise static files storage setting for production
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# AWS S3 Storage for Media Files
-# If AWS credentials and bucket are provided via env variables, use S3; otherwise use local media storage.
-AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
-AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
-AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME", "eu-north-1")
+# Media files (e.g., user uploads like assignment briefs)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
-if AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY and AWS_STORAGE_BUCKET_NAME:
-    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
-    AWS_S3_OBJECT_PARAMETERS = {
-        'CacheControl': 'max-age=86400',
-    }
-    AWS_DEFAULT_ACL = None
-    AWS_LOCATION = 'media'
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
-else:
-    MEDIA_URL = '/media/'
-    MEDIA_ROOT = BASE_DIR / 'media'
-
-# Stripe API Keys (set these via environment variables in production)
-STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY", "pk_default")
-STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY", "sk_default")
-
-# Optional: Logging setup to help debug environment issues
-import logging
-if DEBUG:
-    logging.basicConfig(level=logging.DEBUG)
-    logging.debug(f"DEBUG Mode: {DEBUG}")
-    logging.debug(f"Allowed Hosts: {ALLOWED_HOSTS}")
-    logging.debug(f"AWS Access Key ID: {'SET' if AWS_ACCESS_KEY_ID else 'NOT SET'}")
-    logging.debug(f"AWS Secret Access Key: {'SET' if AWS_SECRET_ACCESS_KEY else 'NOT SET'}")
-    logging.debug(f"AWS Bucket: {AWS_STORAGE_BUCKET_NAME if AWS_STORAGE_BUCKET_NAME else 'NOT SET'}")
-    logging.debug(f"Stripe Publishable Key: {'SET' if STRIPE_PUBLISHABLE_KEY else 'NOT SET'}")
+# Stripe API Keys
+# In production, load these from environment variables.
+STRIPE_PUBLISHABLE_KEY = os.environ.get("STRIPE_PUBLISHABLE_KEY", "pk_live_51QqxpCJdpJzxVZD9lOu4Lv9YotwZvKUapao29R9zvUAQchrQWqCgepv7e0plcxTgy2HESuwYi2DxEx0PguFgKK0x00WkiU99gh")
+STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY", "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")
