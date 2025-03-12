@@ -136,6 +136,28 @@
     color: #ccc;
   }
 
+  /* Founder Section */
+  .founder-section {
+    background-color: #111;
+    padding: 60px 0;
+  }
+  .founder-section h2 {
+    color: #fff;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  .founder-section .founder-img {
+    max-width: 200px;
+  }
+  .founder-section .founder-name {
+    font-weight: bold;
+    color: #fff;
+  }
+  .founder-section blockquote {
+    font-style: italic;
+    color: #ffc107;
+  }
+
   /* Hover effect on general buttons */
   .hover-effect:hover {
     filter: brightness(1.2);
@@ -220,6 +242,33 @@
         <p>Access our services anytime, anywhere, and manage your academic and work life effortlessly.</p>
         <h5>Trusted by Thousands</h5>
         <p>Join our community of satisfied students who have achieved academic success and found fulfilling jobs.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Founder Section -->
+<div class="founder-section section">
+  <div class="container">
+    <h2>Meet Our Founder</h2>
+    <div class="row align-items-center">
+      <div class="col-md-4 text-center mb-4 mb-md-0">
+        <!-- Round image of founder -->
+        <img src="{% static 'images/founder.JPG' %}" 
+             alt="Founder Image" 
+             class="img-fluid founder-img rounded-circle">
+      </div>
+      <div class="col-md-8">
+        <h3 class="founder-name">Sufiyan Ahamed</h3>
+        <p>MSc International Business with Advanced Research</p>
+        <blockquote class="blockquote">
+          <p class="mb-0">"Strive for progress, not perfection."</p>
+        </blockquote>
+        <p>
+          Our founder’s vision is to empower students academically and professionally. 
+          By blending top-notch assignment guidance with real-world job opportunities, 
+          HelpMaster helps you reach your fullest potential and stand out in a competitive marketplace.
+        </p>
       </div>
     </div>
   </div>
