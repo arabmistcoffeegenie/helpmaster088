@@ -136,7 +136,7 @@
     color: #ccc;
   }
 
-  /* Founder Section */
+  /* Founder Section - Desktop */
   .founder-section {
     background-color: #111;
     padding: 60px 0;
@@ -146,16 +146,39 @@
     margin-bottom: 2rem;
     text-align: center;
   }
-  .founder-section .founder-img {
-    max-width: 200px;
+  .founder-img {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #ffd700;
+    margin: 0 auto;
+    display: block;
   }
-  .founder-section .founder-name {
+  .founder-name {
     font-weight: bold;
     color: #fff;
   }
   .founder-section blockquote {
     font-style: italic;
     color: #ffc107;
+  }
+
+  /* Founder Section - Mobile Adjustments */
+  @media (max-width: 576px) {
+    .founder-img {
+      width: 150px;
+      height: 150px;
+    }
+    .founder-section h2 {
+      font-size: 1.8rem;
+    }
+    .founder-name {
+      font-size: 1.4rem;
+    }
+    .founder-section blockquote {
+      font-size: 1rem;
+    }
   }
 
   /* Hover effect on general buttons */
@@ -250,13 +273,13 @@
 <!-- Founder Section -->
 <div class="founder-section section">
   <div class="container">
-    <h2>Meet Our Founder</h2>
+    <h2 class="text-center">Meet Our Founder</h2>
     <div class="row align-items-center">
       <div class="col-md-4 text-center mb-4 mb-md-0">
         <!-- Round image of founder -->
         <img src="{% static 'images/founder.JPG' %}" 
-             alt="Founder Image" 
-             class="img-fluid founder-img rounded-circle">
+             alt="Founder Sufiyan Ahamed" 
+             class="founder-img">
       </div>
       <div class="col-md-8">
         <h3 class="founder-name">Sufiyan Ahamed</h3>

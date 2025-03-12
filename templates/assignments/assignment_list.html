@@ -10,10 +10,12 @@
 
   <!-- Inline styles for demonstration. In production, move these to your CSS file. -->
   <style>
-    /* Card styling and hover effect */
+    /* Card styling and hover effect (applies to all views) */
     .assignment-card {
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       border-radius: 8px;
+      background-color: #fff;  /* white background */
+      color: #000;             /* black text */
     }
     .assignment-card:hover {
       transform: translateY(-3px);
@@ -42,13 +44,31 @@
     .btn-completed:hover {
       background-color: #218838;
     }
+    /* Ensure text elements inside cards use black text */
+    .assignment-card h5.card-title,
+    .assignment-card p {
+      color: #000 !important;
+    }
+    
+    /* Mobile-specific adjustments */
+    @media (max-width: 768px) {
+      .assignment-card {
+        /* Default scale for mobile */
+        transform: scale(0.9);
+        transition: transform 0.3s ease;
+      }
+      /* When a card is in view (i.e. 'zoomed'), scale it to full size */
+      .assignment-card.zoomed {
+        transform: scale(1);
+      }
+    }
   </style>
 
   <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
     {% if assignments %}
       {% for assignment in assignments %}
         {% if assignment.status == "completed" %}
-          {% with card_class="assignment-card completed" btn_class="btn-completed" badge_text="Completed" badge_class="badge-completed" %}
+          {% with card_class="assignment-card" btn_class="btn-completed" badge_text="Completed" badge_class="badge-completed" %}
             <div class="col">
               <div class="card {{ card_class }} h-100 border-0 shadow-sm">
                 <div class="card-body d-flex flex-column p-4">
@@ -56,10 +76,6 @@
                   <h5 class="card-title mb-1">
                     {{ assignment.title|default_if_none:"Untitled Assignment" }}
                   </h5>
-                  <!-- Submitted by -->
-                  <p class="text-muted mb-2" style="font-size: 0.9rem;">
-                    Submitted by <strong>{{ assignment.student.username }}</strong>
-                  </p>
                   <!-- Module and Deadline -->
                   <p class="mb-1" style="font-size: 0.9rem;">
                     <strong>Module:</strong> {{ assignment.module|default_if_none:"(no module)" }}
@@ -71,6 +87,10 @@
                     {% else %}
                       (no deadline)
                     {% endif %}
+                  </p>
+                  <!-- Submitted by -->
+                  <p class="mb-2" style="font-size: 0.9rem;">
+                    Submitted by <strong>{{ assignment.student.username }}</strong>
                   </p>
                   <!-- Badges -->
                   <div class="mb-3">
@@ -94,7 +114,7 @@
             </div>
           {% endwith %}
         {% else %}
-          {% with card_class="assignment-card processing" btn_class="btn-warning" badge_text="Processing..." badge_class="badge-processing" %}
+          {% with card_class="assignment-card" btn_class="btn-warning" badge_text="Processing..." badge_class="badge-processing" %}
             <div class="col">
               <div class="card {{ card_class }} h-100 border-0 shadow-sm">
                 <div class="card-body d-flex flex-column p-4">
@@ -102,10 +122,6 @@
                   <h5 class="card-title mb-1">
                     {{ assignment.title|default_if_none:"Untitled Assignment" }}
                   </h5>
-                  <!-- Submitted by -->
-                  <p class="text-muted mb-2" style="font-size: 0.9rem;">
-                    Submitted by <strong>{{ assignment.student.username }}</strong>
-                  </p>
                   <!-- Module and Deadline -->
                   <p class="mb-1" style="font-size: 0.9rem;">
                     <strong>Module:</strong> {{ assignment.module|default_if_none:"(no module)" }}
@@ -117,6 +133,10 @@
                     {% else %}
                       (no deadline)
                     {% endif %}
+                  </p>
+                  <!-- Submitted by -->
+                  <p class="mb-2" style="font-size: 0.9rem;">
+                    Submitted by <strong>{{ assignment.student.username }}</strong>
                   </p>
                   <!-- Badges -->
                   <div class="mb-3">
@@ -148,4 +168,24 @@
     <a class="btn btn-secondary" href="/accounts/profile/">Back to Dashboard</a>
   </div>
 </div>
+
+<!-- JavaScript: Add zoom effect on scroll for mobile view -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  if (window.innerWidth <= 768) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.intersectionRatio >= 0.5) {
+          entry.target.classList.add('zoomed');
+        } else {
+          entry.target.classList.remove('zoomed');
+        }
+      });
+    }, { threshold: 0.5 });
+
+    const cards = document.querySelectorAll('.assignment-card');
+    cards.forEach(card => observer.observe(card));
+  }
+});
+</script>
 {% endblock %}
