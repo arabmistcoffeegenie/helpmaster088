@@ -6,11 +6,11 @@ from django.core.management import call_command
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'helpmaster.settings')
 django.setup()
 
-# Run migrations automatically on startup
+# Automatically run migrations on startup (temporary workaround)
 try:
     call_command('migrate', interactive=False)
+    print("Migrations applied successfully.")
 except Exception as e:
-    # Log or handle the exception as needed.
     print("Error running migrations:", e)
 
 application = get_wsgi_application()
