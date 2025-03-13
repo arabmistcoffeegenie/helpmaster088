@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from storages.backends.s3boto3 import S3Boto3Storage  # Ensure S3Boto3 is used
+from storages.backends.s3boto3 import S3Boto3Storage  # Explicit AWS S3 storage
 
 STATUS_CHOICES = [
     ('processing', 'Processing'),
@@ -21,9 +21,9 @@ class Assignment(models.Model):
     instructions = models.TextField(blank=True, null=True)
     deadline = models.DateField(blank=True, null=True)
 
-    # ✅ Uploaded brief file (Saved to AWS S3)
+    # ✅ Ensure student uploads are stored in AWS S3
     brief = models.FileField(
-        storage=S3Boto3Storage(),
+        storage=S3Boto3Storage(),  # Use S3 storage explicitly
         upload_to="assignments/",
         blank=True, null=True
     )
@@ -34,9 +34,9 @@ class Assignment(models.Model):
     # ✅ Status field
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='processing')
 
-    # ✅ Completed assignment file (Now properly saved to AWS S3)
+    # ✅ Ensure admin uploads also go to AWS S3
     completed_file = models.FileField(
-        storage=S3Boto3Storage(),  # Ensure S3 storage is used
+        storage=S3Boto3Storage(),  # Explicitly set S3 storage
         upload_to="assignments/completed/",
         blank=True, null=True
     )
@@ -44,7 +44,7 @@ class Assignment(models.Model):
     def __str__(self):
         return f"{self.title} ({self.student.username})"
 
-# ✅ Custom Managers for Filtering Assignments (Optional)
+# ✅ Custom Managers for Filtering Assignments
 class PremiumAssignmentManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(student__is_staff=True)
