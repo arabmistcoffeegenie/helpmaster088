@@ -23,7 +23,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'accounts',
+    'accounts.apps.AccountsConfig',  # Use the custom AppConfig
     'assignments',
     'jobs',
     'payments',
