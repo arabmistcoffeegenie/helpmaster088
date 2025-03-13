@@ -1,13 +1,14 @@
 import os
-from pathlib import Path
 import dj_database_url
+from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # ✅ Security
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "your-default-secret-key")
 DEBUG = os.getenv("DEBUG", "False").lower() in ["true", "1", "yes"]
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",") if os.getenv("ALLOWED_HOSTS") else []
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
+
 CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",") if os.getenv("CSRF_TRUSTED_ORIGINS") else []
 
 # ✅ Installed Apps
@@ -57,12 +58,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'helpmaster.wsgi.application'
 
-# ✅ DATABASE - USE POSTGRESQL IN RENDER
+# ✅ DATABASE - Use PostgreSQL in Render
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.getenv("DATABASE_URL", "sqlite:///db.sqlite3"),
-        conn_max_age=600,  
-        ssl_require=True  # ✅ Enforces SSL for secure connections
+        default=os.getenv("DATABASE_URL"),  # PostgreSQL database URL from Render
+        conn_max_age=600,  # Keeps connection open
+        ssl_require=True,  # Ensures secure connection
     )
 }
 
@@ -76,13 +77,13 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-# ✅ Static Files
+# ✅ Static Files Configuration (Whitenoise for Render)
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# ======= ✅ AWS S3 Storage Configuration =======
+# ✅ AWS S3 Storage Configuration
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
 AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
@@ -91,7 +92,7 @@ AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME", "eu-north-1")
 if not AWS_ACCESS_KEY_ID or not AWS_SECRET_ACCESS_KEY or not AWS_STORAGE_BUCKET_NAME:
     raise ValueError("AWS S3 credentials are missing!")
 
-# ✅ Use AWS S3 Custom Domain
+# ✅ Use S3 Custom Domain
 AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com"
 
 # ✅ AWS Storage Options
@@ -109,7 +110,7 @@ MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
 STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")
 STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
 
-# ✅ Logging
+# ✅ Logging Configuration
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -117,7 +118,7 @@ LOGGING = {
         'file': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
-            'filename': BASE_DIR / 'logs/errors.log',  # ✅ Corrected log file path
+            'filename': BASE_DIR / 'logs/errors.log',  # ✅ Correct log file path
         },
         'console': {
             'level': 'DEBUG',
