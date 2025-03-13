@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from storages.backends.s3boto3 import S3Boto3Storage  # ✅ Ensure S3 is used only where needed
+from storages.backends.s3boto3 import S3Boto3Storage  # ✅ Ensures AWS S3 is used
 
 STATUS_CHOICES = [
     ('processing', 'Processing'),
@@ -21,8 +21,9 @@ class Assignment(models.Model):
     instructions = models.TextField(blank=True, null=True)
     deadline = models.DateField(blank=True, null=True)
 
-    # ✅ Student uploads remain unchanged
+    # ✅ Ensure student uploads go to AWS S3
     brief = models.FileField(
+        storage=S3Boto3Storage(),  # ✅ Explicitly use AWS S3 for student uploads
         upload_to="assignments/",
         blank=True, null=True
     )
@@ -33,16 +34,15 @@ class Assignment(models.Model):
     # ✅ Status field
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='processing')
 
-    # ✅ Admin uploads now explicitly go to AWS S3
+    # ✅ Ensure admin uploads go to AWS S3
     completed_file = models.FileField(
-        storage=S3Boto3Storage(),  # ✅ Force admin uploads to S3
+        storage=S3Boto3Storage(),  # ✅ Explicitly use AWS S3 for admin uploads
         upload_to="assignments/completed/",
         blank=True, null=True
     )
 
     def __str__(self):
         return f"{self.title} ({self.student.username})"
-
 
 # ✅ Custom Managers for Filtering Assignments
 class PremiumAssignmentManager(models.Manager):
