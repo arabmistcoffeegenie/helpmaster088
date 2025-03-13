@@ -7,7 +7,6 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Security
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "your-default-secret-key")
 DEBUG = os.getenv("DEBUG", "False").lower() in ["true", "1", "yes"]
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",") if os.getenv("ALLOWED_HOSTS") else []
@@ -92,3 +91,8 @@ AWS_S3_OBJECT_PARAMETERS = {
 }
 
 MEDIA_URL = f"{AWS_S3_CUSTOM_DOMAIN}/"
+
+# Add STRIPE_SECRET_KEY with a fallback value
+STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY", "your-default-stripe-key")
+
+# Other configuration values remain unchanged
