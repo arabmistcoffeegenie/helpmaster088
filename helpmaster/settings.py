@@ -1,4 +1,5 @@
 import os
+import logging
 from pathlib import Path
 from dotenv import load_dotenv  # Ensure this is installed using `pip install python-dotenv`
 
@@ -9,7 +10,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # ========================= Security =========================
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "your-default-secret-key")
-DEBUG = os.getenv("DEBUG", "True").lower() in ["true", "1", "yes"]
+DEBUG = os.getenv("DEBUG", "False").lower() in ["true", "1", "yes"]
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
 # CSRF Trusted Origins
@@ -116,7 +117,29 @@ STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")
 STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
 
 # ========================= Debugging & Logging =========================
-import logging
+LOG_FILE_PATH = BASE_DIR / "logs" / "django_errors.log"
+os.makedirs(BASE_DIR / "logs", exist_ok=True)  # Ensure logs directory exists
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': LOG_FILE_PATH,
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    },
+}
+
+# ✅ Extra Debugging Info
 if DEBUG:
     logging.basicConfig(level=logging.DEBUG)
     logging.debug(f"DEBUG Mode: {DEBUG}")
