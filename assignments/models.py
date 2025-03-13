@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-from storages.backends.s3boto3 import S3Boto3Storage  # ✅ Ensures AWS S3 is used
 
 STATUS_CHOICES = [
     ('processing', 'Processing'),
@@ -21,9 +20,8 @@ class Assignment(models.Model):
     instructions = models.TextField(blank=True, null=True)
     deadline = models.DateField(blank=True, null=True)
 
-    # ✅ Ensure student uploads go to AWS S3
+    # Uploaded brief file (Saved to AWS S3 automatically)
     brief = models.FileField(
-        storage=S3Boto3Storage(),  # ✅ Explicitly use AWS S3 for student uploads
         upload_to="assignments/",
         blank=True, null=True
     )
@@ -31,12 +29,11 @@ class Assignment(models.Model):
     payment_status = models.CharField(max_length=50, choices=PAYMENT_STATUS_CHOICES, default='unpaid')
     created_at = models.DateTimeField(auto_now_add=True)
 
-    # ✅ Status field
+    # Status field
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='processing')
 
-    # ✅ Ensure admin uploads go to AWS S3
+    # Completed assignment file (Saved to AWS S3 automatically)
     completed_file = models.FileField(
-        storage=S3Boto3Storage(),  # ✅ Explicitly use AWS S3 for admin uploads
         upload_to="assignments/completed/",
         blank=True, null=True
     )
@@ -44,16 +41,17 @@ class Assignment(models.Model):
     def __str__(self):
         return f"{self.title} ({self.student.username})"
 
-# ✅ Custom Managers for Filtering Assignments
+
+# ✅ Corrected Manager (Use Only If UserProfile Exists)
 class PremiumAssignmentManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(student__is_staff=True)
+        return super().get_queryset().filter(student__is_staff=True)  # ✅ Example Fix
 
 class NonPremiumAssignmentManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(student__is_staff=False)
+        return super().get_queryset().filter(student__is_staff=False)  # ✅ Example Fix
 
-# ✅ Proxy Models
+
 class PremiumAssignment(Assignment):
     objects = PremiumAssignmentManager()
 
@@ -61,6 +59,7 @@ class PremiumAssignment(Assignment):
         proxy = True
         verbose_name = "Premium Assignment"
         verbose_name_plural = "Premium Assignments"
+
 
 class NonPremiumAssignment(Assignment):
     objects = NonPremiumAssignmentManager()
