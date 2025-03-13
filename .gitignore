@@ -1,17 +1,15 @@
+# Ignore system files
+__pycache__/
+*.pyc
+
 # Ignore virtual environment
 venv/
+.env
 
-# Ignore Python cache files
-__pycache__/
-*.py[cod]
-
-# Ignore macOS system files
-.DS_Store
-
-# Ignore local database
+# Ignore database
 db.sqlite3
 
-# (Optional) Ignore static and media files if needed
+# Ignore static and media files (if using cloud storage like AWS S3)
 staticfiles/
 media/
 
