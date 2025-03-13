@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from storages.backends.s3boto3 import S3Boto3Storage
 
 STATUS_CHOICES = [
     ('processing', 'Processing'),
@@ -13,14 +14,26 @@ class Assignment(models.Model):
     module = models.CharField(max_length=255, blank=True, null=True)
     instructions = models.TextField(blank=True, null=True)
     deadline = models.DateField(blank=True, null=True)
-    # Uploaded brief file
-    brief = models.FileField(upload_to="assignments/", blank=True, null=True)
+
+    # Uploaded brief file (Saved to AWS S3)
+    brief = models.FileField(
+        storage=S3Boto3Storage(),
+        upload_to="assignments/",
+        blank=True, null=True
+    )
+
     payment_status = models.CharField(max_length=50, default='unpaid')
     created_at = models.DateTimeField(auto_now_add=True)
-    
-    # New fields:
+
+    # Status field
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='processing')
-    completed_file = models.FileField(upload_to="assignments/completed/", blank=True, null=True)
+
+    # Completed assignment file (Saved to AWS S3)
+    completed_file = models.FileField(
+        storage=S3Boto3Storage(),
+        upload_to="assignments/completed/",
+        blank=True, null=True
+    )
 
     def __str__(self):
         return f"{self.title} ({self.student.username})"

@@ -1,44 +1,38 @@
 import os
 from pathlib import Path
+from dotenv import load_dotenv  # Ensure this is installed using `pip install python-dotenv`
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# Load environment variables from .env file
+load_dotenv()
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECURITY WARNING: keep the secret key used in production secret!
-# In production, set the DJANGO_SECRET_KEY environment variable.
-SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "django-insecure-d@H%G9sL!eB3p2xF#Q8wJzR1t@k6v*Y4uM7nP0mC5qR8sT3vU")
+# Security
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "your-default-secret-key")
+DEBUG = os.getenv("DEBUG", "True").lower() in ["true", "1", "yes"]
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DEBUG", "True") == "True"
+# CSRF Trusted Origins
+CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",") if os.getenv("CSRF_TRUSTED_ORIGINS") else []
 
-# Allowed hosts.
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "127.0.0.1,localhost,192.168.0.106").split(",")
-
-# CSRF Trusted Origins for custom domains (set via environment variable in production)
-CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",") if os.environ.get("CSRF_TRUSTED_ORIGINS") else []
-
+# Installed Apps
 INSTALLED_APPS = [
-    # Django default apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
-    # Your apps
     'accounts',
     'assignments',
     'jobs',
     'payments',
-
-    # AWS Storage
-    'storages',
+    'storages',  # AWS S3 Storage
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # WhiteNoise for static file serving in production
+    'whitenoise.middleware.WhiteNoiseMiddleware', 
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -52,12 +46,12 @@ ROOT_URLCONF = 'helpmaster.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],  # Global templates folder
-        'APP_DIRS': True,  # Also looks for templates in app directories
+        'DIRS': [BASE_DIR / 'templates'],
+        'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
-                'django.template.context_processors.request',  # Required for auth views
+                'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
@@ -67,6 +61,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'helpmaster.wsgi.application'
 
+# Database
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -74,7 +69,6 @@ DATABASES = {
     }
 }
 
-# Simplified password validators for development.
 AUTH_PASSWORD_VALIDATORS = []
 
 LANGUAGE_CODE = 'en-us'
@@ -83,28 +77,42 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-# ======= STATIC FILES CONFIGURATION =======
+# Static files
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']  # Static files folder
-STATIC_ROOT = BASE_DIR / 'staticfiles'  # Where static files are collected
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'  # WhiteNoise for static files
+STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# ======= AWS S3 MEDIA STORAGE CONFIGURATION =======
-AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
-AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME")
-AWS_S3_REGION_NAME = os.environ.get("AWS_S3_REGION_NAME", "us-east-1")  # Update based on your AWS region
+# ======= AWS S3 Storage Configuration (Mandatory - No Local Storage) =======
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
+AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME", "eu-north-1")
 
-# Ensure AWS credentials exist before enabling S3 storage
-if AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY and AWS_STORAGE_BUCKET_NAME:
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-    AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
-    MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
-else:
-    # If AWS is not configured, fallback to local storage (useful for development)
-    MEDIA_URL = '/media/'
-    MEDIA_ROOT = BASE_DIR / 'media'
+if not AWS_ACCESS_KEY_ID or not AWS_SECRET_ACCESS_KEY or not AWS_STORAGE_BUCKET_NAME:
+    raise ValueError("AWS S3 credentials are missing!")
 
-# ======= STRIPE API CONFIGURATION =======
-STRIPE_PUBLISHABLE_KEY = os.environ.get("STRIPE_PUBLISHABLE_KEY", "your-public-key")
-STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY", "your-secret-key")
+DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
+
+AWS_DEFAULT_ACL = None
+AWS_QUERYSTRING_AUTH = False
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',
+}
+
+# Stripe API Keys
+STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")
+STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
+
+# Debugging Logs
+import logging
+if DEBUG:
+    logging.basicConfig(level=logging.DEBUG)
+    logging.debug(f"DEBUG Mode: {DEBUG}")
+    logging.debug(f"Allowed Hosts: {ALLOWED_HOSTS}")
+    logging.debug(f"AWS Access Key ID: {'SET' if AWS_ACCESS_KEY_ID else 'NOT SET'}")
+    logging.debug(f"AWS Secret Access Key: {'SET' if AWS_SECRET_ACCESS_KEY else 'NOT SET'}")
+    logging.debug(f"AWS Bucket: {AWS_STORAGE_BUCKET_NAME if AWS_STORAGE_BUCKET_NAME else 'NOT SET'}")
+    logging.debug(f"Stripe Keys: {'SET' if STRIPE_PUBLISHABLE_KEY else 'NOT SET'}")
