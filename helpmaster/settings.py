@@ -1,22 +1,22 @@
 import os
-import logging
 from pathlib import Path
 from dotenv import load_dotenv  # Ensure this is installed using `pip install python-dotenv`
+import logging
 
 # Load environment variables from .env file
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# ========================= Security =========================
+# Security
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "your-default-secret-key")
-DEBUG = os.getenv("DEBUG", "False").lower() in ["true", "1", "yes"]
+DEBUG = os.getenv("DEBUG", "True").lower() in ["true", "1", "yes"]
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
 # CSRF Trusted Origins
 CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",") if os.getenv("CSRF_TRUSTED_ORIGINS") else []
 
-# ========================= Installed Apps =========================
+# Installed Apps
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -31,10 +31,9 @@ INSTALLED_APPS = [
     'storages',  # AWS S3 Storage
 ]
 
-# ========================= Middleware =========================
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # ✅ Added Whitenoise Middleware
+    'whitenoise.middleware.WhiteNoiseMiddleware', 
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -43,10 +42,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# ========================= URL Configuration =========================
 ROOT_URLCONF = 'helpmaster.urls'
 
-# ========================= Templates Configuration =========================
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -63,10 +60,9 @@ TEMPLATES = [
     },
 ]
 
-# ========================= WSGI Application =========================
 WSGI_APPLICATION = 'helpmaster.wsgi.application'
 
-# ========================= Database Configuration =========================
+# Database
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -74,32 +70,30 @@ DATABASES = {
     }
 }
 
-# ========================= Password Validators (Disable for Dev) =========================
 AUTH_PASSWORD_VALIDATORS = []
 
-# ========================= Localization =========================
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-# ========================= Static & Media Files =========================
+# Static files
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'  # ✅ Enable Whitenoise storage
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# ========================= AWS S3 Storage Configuration =========================
+# ======= AWS S3 Storage Configuration =======
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
 AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
-AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME", "eu-north-1")  # ✅ Default to eu-north-1
+AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME", "eu-north-1")
 
-if not all([AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_STORAGE_BUCKET_NAME]):
-    raise ValueError("❌ AWS S3 credentials are missing! Set them in the environment.")
+if not AWS_ACCESS_KEY_ID or not AWS_SECRET_ACCESS_KEY or not AWS_STORAGE_BUCKET_NAME:
+    raise ValueError("AWS S3 credentials are missing!")
 
-# ✅ AWS S3 Correct Endpoint for any region
+# ✅ Correct AWS S3 Endpoint for eu-north-1
 AWS_S3_ENDPOINT_URL = f"https://s3.{AWS_S3_REGION_NAME}.amazonaws.com"
 AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com"
 
@@ -112,34 +106,43 @@ AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
 }
 
-# ========================= Stripe API Configuration =========================
+# Stripe API Keys
 STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")
 STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
 
-# ========================= Debugging & Logging =========================
-LOG_FILE_PATH = BASE_DIR / "logs" / "django_errors.log"
-os.makedirs(BASE_DIR / "logs", exist_ok=True)  # Ensure logs directory exists
-
+# ✅ Error Logging Configuration
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+    },
     'handlers': {
         'file': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
-            'filename': LOG_FILE_PATH,
+            'filename': os.path.join(BASE_DIR, 'logs/errors.log'),
+            'formatter': 'verbose',
+        },
+        'console': {
+            'level': 'ERROR',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
         },
     },
     'loggers': {
         'django': {
-            'handlers': ['file'],
+            'handlers': ['file', 'console'],
             'level': 'ERROR',
             'propagate': True,
         },
     },
 }
 
-# ✅ Extra Debugging Info
+# ✅ Debugging Logs (Only in Debug Mode)
 if DEBUG:
     logging.basicConfig(level=logging.DEBUG)
     logging.debug(f"DEBUG Mode: {DEBUG}")
@@ -148,3 +151,4 @@ if DEBUG:
     logging.debug(f"AWS Secret Access Key: {'SET' if AWS_SECRET_ACCESS_KEY else 'NOT SET'}")
     logging.debug(f"AWS Bucket: {AWS_STORAGE_BUCKET_NAME if AWS_STORAGE_BUCKET_NAME else 'NOT SET'}")
     logging.debug(f"Stripe Keys: {'SET' if STRIPE_PUBLISHABLE_KEY else 'NOT SET'}")
+
