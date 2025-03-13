@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.core.files.storage import default_storage
+from storages.backends.s3boto3 import S3Boto3Storage  # Ensure S3Boto3 is used
 
 STATUS_CHOICES = [
     ('processing', 'Processing'),
@@ -21,11 +21,11 @@ class Assignment(models.Model):
     instructions = models.TextField(blank=True, null=True)
     deadline = models.DateField(blank=True, null=True)
 
-    # ✅ Student uploaded brief file (Stored in AWS S3)
+    # ✅ Uploaded brief file (Saved to AWS S3)
     brief = models.FileField(
+        storage=S3Boto3Storage(),
         upload_to="assignments/",
-        blank=True, 
-        null=True
+        blank=True, null=True
     )
 
     payment_status = models.CharField(max_length=50, choices=PAYMENT_STATUS_CHOICES, default='unpaid')
@@ -34,27 +34,38 @@ class Assignment(models.Model):
     # ✅ Status field
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='processing')
 
-    # ✅ Admin uploaded completed file (Stored in AWS S3)
+    # ✅ Completed assignment file (Now properly saved to AWS S3)
     completed_file = models.FileField(
+        storage=S3Boto3Storage(),  # Ensure S3 storage is used
         upload_to="assignments/completed/",
-        blank=True, 
-        null=True
+        blank=True, null=True
     )
-
-    def save(self, *args, **kwargs):
-        """
-        ✅ Ensures that completed_file gets stored in AWS S3.
-        ✅ Works for both student-uploaded and admin-uploaded files.
-        """
-        if self.completed_file and not self.completed_file.name.startswith("assignments/completed/"):
-            # ✅ Force correct path in AWS S3
-            self.completed_file.name = f"assignments/completed/{self.completed_file.name}"
-
-        if self.brief and not self.brief.name.startswith("assignments/"):
-            # ✅ Force correct path in AWS S3
-            self.brief.name = f"assignments/{self.brief.name}"
-
-        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.title} ({self.student.username})"
+
+# ✅ Custom Managers for Filtering Assignments (Optional)
+class PremiumAssignmentManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(student__is_staff=True)
+
+class NonPremiumAssignmentManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(student__is_staff=False)
+
+# ✅ Proxy Models
+class PremiumAssignment(Assignment):
+    objects = PremiumAssignmentManager()
+
+    class Meta:
+        proxy = True
+        verbose_name = "Premium Assignment"
+        verbose_name_plural = "Premium Assignments"
+
+class NonPremiumAssignment(Assignment):
+    objects = NonPremiumAssignmentManager()
+
+    class Meta:
+        proxy = True
+        verbose_name = "Non-Premium Assignment"
+        verbose_name_plural = "Non-Premium Assignments"
