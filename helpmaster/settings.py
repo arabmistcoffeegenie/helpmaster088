@@ -1,7 +1,6 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv  # Ensure this is installed using `pip install python-dotenv`
-import logging
 
 # Load environment variables from .env file
 load_dotenv()
@@ -33,7 +32,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware', 
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -110,7 +109,10 @@ AWS_S3_OBJECT_PARAMETERS = {
 STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")
 STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
 
-# ✅ Error Logging Configuration
+# ✅ Fix: Ensure logs directory exists
+LOG_DIR = BASE_DIR / 'logs'
+LOG_DIR.mkdir(exist_ok=True)  # ✅ Create logs directory if it doesn’t exist
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -124,7 +126,7 @@ LOGGING = {
         'file': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs/errors.log'),
+            'filename': str(LOG_DIR / 'errors.log'),  # ✅ Use dynamic path
             'formatter': 'verbose',
         },
         'console': {
@@ -142,7 +144,8 @@ LOGGING = {
     },
 }
 
-# ✅ Debugging Logs (Only in Debug Mode)
+# Debugging Logs
+import logging
 if DEBUG:
     logging.basicConfig(level=logging.DEBUG)
     logging.debug(f"DEBUG Mode: {DEBUG}")
@@ -151,4 +154,3 @@ if DEBUG:
     logging.debug(f"AWS Secret Access Key: {'SET' if AWS_SECRET_ACCESS_KEY else 'NOT SET'}")
     logging.debug(f"AWS Bucket: {AWS_STORAGE_BUCKET_NAME if AWS_STORAGE_BUCKET_NAME else 'NOT SET'}")
     logging.debug(f"Stripe Keys: {'SET' if STRIPE_PUBLISHABLE_KEY else 'NOT SET'}")
-
