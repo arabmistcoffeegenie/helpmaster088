@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from storages.backends.s3boto3 import S3Boto3Storage  # ✅ Ensure S3 Storage is used
 
 STATUS_CHOICES = [
     ('processing', 'Processing'),
@@ -20,8 +21,9 @@ class Assignment(models.Model):
     instructions = models.TextField(blank=True, null=True)
     deadline = models.DateField(blank=True, null=True)
 
-    # Uploaded brief file (Saved to AWS S3 automatically)
+    # ✅ Ensure student-uploaded files go to AWS S3
     brief = models.FileField(
+        storage=S3Boto3Storage(),  # ✅ Use AWS S3 storage explicitly
         upload_to="assignments/",
         blank=True, null=True
     )
@@ -29,29 +31,29 @@ class Assignment(models.Model):
     payment_status = models.CharField(max_length=50, choices=PAYMENT_STATUS_CHOICES, default='unpaid')
     created_at = models.DateTimeField(auto_now_add=True)
 
-    # Status field
+    # ✅ Status field
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='processing')
 
-    # Completed assignment file (Saved to AWS S3 automatically)
+    # ✅ Ensure admin-uploaded completed files go to AWS S3
     completed_file = models.FileField(
-        upload_to="assignments/",
+        storage=S3Boto3Storage(),  # ✅ Explicitly use AWS S3 for admin uploads
+        upload_to="assignments/completed/",
         blank=True, null=True
     )
 
     def __str__(self):
         return f"{self.title} ({self.student.username})"
 
-
-# ✅ Corrected Manager (Use Only If UserProfile Exists)
+# ✅ Custom Managers for Filtering Assignments
 class PremiumAssignmentManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(student__is_staff=True)  # ✅ Example Fix
+        return super().get_queryset().filter(student__is_staff=True)
 
 class NonPremiumAssignmentManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(student__is_staff=False)  # ✅ Example Fix
+        return super().get_queryset().filter(student__is_staff=False)
 
-
+# ✅ Proxy Models
 class PremiumAssignment(Assignment):
     objects = PremiumAssignmentManager()
 
@@ -59,7 +61,6 @@ class PremiumAssignment(Assignment):
         proxy = True
         verbose_name = "Premium Assignment"
         verbose_name_plural = "Premium Assignments"
-
 
 class NonPremiumAssignment(Assignment):
     objects = NonPremiumAssignmentManager()
