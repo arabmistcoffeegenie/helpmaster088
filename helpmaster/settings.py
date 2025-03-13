@@ -1,16 +1,20 @@
 import os
 from pathlib import Path
 import dj_database_url
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECURITY
+# Security
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "your-default-secret-key")
 DEBUG = os.getenv("DEBUG", "False").lower() in ["true", "1", "yes"]
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",") if os.getenv("ALLOWED_HOSTS") else []
 CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",") if os.getenv("CSRF_TRUSTED_ORIGINS") else []
 
-# INSTALLED APPS
+# Installed Apps
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -18,17 +22,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'accounts',        # your custom apps
+    'accounts.apps.AccountsConfig',  # Use your custom AppConfig
     'assignments',
     'jobs',
     'payments',
-    'storages',        # AWS S3 support
+    'storages',  # AWS S3 Storage support
 ]
 
-# MIDDLEWARE
+# Middleware
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # serve static files
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Serve static files efficiently on Render
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -57,32 +61,28 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'helpmaster.wsgi.application'
 
-# DATABASE (Using PostgreSQL via DATABASE_URL from Render)
+# Database configuration (using dj_database_url)
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.getenv("DATABASE_URL", "sqlite:///db.sqlite3"),
-        conn_max_age=600,
-        ssl_require=True,
-    )
+    'default': dj_database_url.config(default=os.getenv("DATABASE_URL", f"sqlite:///{BASE_DIR / 'db.sqlite3'}"))
 }
 
-# PASSWORD VALIDATION
+# Password Validation
 AUTH_PASSWORD_VALIDATORS = []
 
-# LANGUAGE & TIMEZONE
+# Language & Timezone
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-# STATIC FILES
+# Static Files
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# AWS S3 STORAGE CONFIGURATION
+# AWS S3 Storage Configuration
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
 AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
@@ -91,7 +91,7 @@ AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME", "eu-north-1")
 if not AWS_ACCESS_KEY_ID or not AWS_SECRET_ACCESS_KEY or not AWS_STORAGE_BUCKET_NAME:
     raise ValueError("AWS S3 credentials are missing!")
 
-# Use a custom domain (this removes the need for specifying an endpoint URL)
+# Set the custom domain for S3 (do not set AWS_S3_ENDPOINT_URL when using custom domain)
 AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com"
 
 DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
@@ -101,13 +101,14 @@ AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
 }
 
+# Media files (stored in S3)
 MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
 
-# STRIPE API KEYS
+# Stripe API Keys
 STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")
 STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
 
-# LOGGING CONFIGURATION
+# Logging Configuration
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -115,7 +116,7 @@ LOGGING = {
         'file': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
-            'filename': BASE_DIR / 'logs/errors.log',  # make sure the logs directory exists
+            'filename': BASE_DIR / 'logs/errors.log',
         },
         'console': {
             'level': 'DEBUG',
@@ -131,13 +132,13 @@ LOGGING = {
     },
 }
 
-# Ensure Logs Directory Exists
+# Ensure the logs directory exists
 if not os.path.exists(BASE_DIR / "logs"):
     os.makedirs(BASE_DIR / "logs")
 
-# OPTIONAL: Debugging prints (only if DEBUG is True)
+# Optional: Basic debugging logs
+import logging
 if DEBUG:
-    import logging
     logging.basicConfig(level=logging.DEBUG)
     logging.debug(f"DEBUG Mode: {DEBUG}")
     logging.debug(f"Allowed Hosts: {ALLOWED_HOSTS}")
