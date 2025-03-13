@@ -1,0 +1,58 @@
+[
+{
+  "model": "auth.user",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$870000$B8B4O51YeDqqY5gFooIvnx$lD44gEl0EYIDwM7PrOVwXC2ogJV5ztBU39Xrn3JmDaw=",
+    "last_login": "2025-03-13T12:58:48.058Z",
+    "is_superuser": true,
+    "username": "sufi",
+    "first_name": "",
+    "last_name": "",
+    "email": "sufiahamed088@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-03-11T13:02:00Z",
+    "groups": [],
+    "user_permissions": [
+      37
+    ]
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 2,
+  "fields": {
+    "password": "pbkdf2_sha256$870000$NAKWQ6wHXS5MUPZJJcNmE1$UrX0G4dF3cui/ipp9YYc8n3HOmRQ6NkZXpHZyMeZJeg=",
+    "last_login": "2025-03-13T12:57:49.083Z",
+    "is_superuser": true,
+    "username": "sufiyanahamed",
+    "first_name": "",
+    "last_name": "",
+    "email": "Sufiyanahamed@arabmist.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2025-03-11T13:03:58.530Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 3,
+  "fields": {
+    "password": "pbkdf2_sha256$870000$7ki0AxyaTOAqIoPdlKFHlF$GREV7VNAz2hGyQZAdKaC512rYkyR2J6MZlCVNvd2hgM=",
+    "last_login": null,
+    "is_superuser": true,
+    "username": "suf",
+    "first_name": "",
+    "last_name": "",
+    "email": "sufiahamed088@gmail.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2025-03-13T13:08:31.783Z",
+    "groups": [],
+    "user_permissions": []
+  }
+}
+]
