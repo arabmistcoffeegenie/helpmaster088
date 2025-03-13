@@ -4,7 +4,7 @@
   "pk": 1,
   "fields": {
     "password": "pbkdf2_sha256$870000$B8B4O51YeDqqY5gFooIvnx$lD44gEl0EYIDwM7PrOVwXC2ogJV5ztBU39Xrn3JmDaw=",
-    "last_login": "2025-03-13T12:58:48.058Z",
+    "last_login": "2025-03-13T13:29:13.446Z",
     "is_superuser": true,
     "username": "sufi",
     "first_name": "",
@@ -24,7 +24,7 @@
   "pk": 2,
   "fields": {
     "password": "pbkdf2_sha256$870000$NAKWQ6wHXS5MUPZJJcNmE1$UrX0G4dF3cui/ipp9YYc8n3HOmRQ6NkZXpHZyMeZJeg=",
-    "last_login": "2025-03-13T12:57:49.083Z",
+    "last_login": "2025-03-13T13:29:33.621Z",
     "is_superuser": true,
     "username": "sufiyanahamed",
     "first_name": "",
@@ -69,6 +69,24 @@
     "is_staff": true,
     "is_active": true,
     "date_joined": "2025-03-13T13:20:19.277Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 5,
+  "fields": {
+    "password": "pbkdf2_sha256$870000$e9c7y5FF4cpXmJLtLRU4jY$i2qIe2ocAr3Xh9FhKALZDVIjdRGu14QZXPJPKiA6GEY=",
+    "last_login": null,
+    "is_superuser": true,
+    "username": "sufiyanahamedofficial",
+    "first_name": "",
+    "last_name": "",
+    "email": "sufiyanahamedofficial@gmail.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2025-03-13T13:35:41.360Z",
     "groups": [],
     "user_permissions": []
   }
