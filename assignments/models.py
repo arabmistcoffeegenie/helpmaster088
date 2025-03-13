@@ -42,7 +42,7 @@ class Assignment(models.Model):
         return f"{self.title} ({self.student.username})"
 
 
-# ✅ Corrected Manager (Use Only If UserProfile Exists)
+# ✅ Corrected Manager (Use Only If `UserProfile` Exists)
 class PremiumAssignmentManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(student__is_staff=True)  # ✅ Example Fix
