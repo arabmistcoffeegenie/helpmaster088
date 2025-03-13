@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-from storages.backends.s3boto3 import S3Boto3Storage
 
 STATUS_CHOICES = [
     ('processing', 'Processing'),
@@ -35,7 +34,6 @@ class Assignment(models.Model):
 
     # Completed assignment file (Saved to AWS S3 automatically)
     completed_file = models.FileField(
-        storage=S3Boto3Storage(),  # Explicitly use S3Boto3Storage for consistency
         upload_to="assignments/completed/",
         blank=True, null=True
     )
@@ -44,13 +42,14 @@ class Assignment(models.Model):
         return f"{self.title} ({self.student.username})"
 
 
+# ✅ Corrected Manager (Use Only If UserProfile Exists)
 class PremiumAssignmentManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(student__is_staff=True)
+        return super().get_queryset().filter(student__is_staff=True)  # ✅ Example Fix
 
 class NonPremiumAssignmentManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(student__is_staff=False)
+        return super().get_queryset().filter(student__is_staff=False)  # ✅ Example Fix
 
 
 class PremiumAssignment(Assignment):
