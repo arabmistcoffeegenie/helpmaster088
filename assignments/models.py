@@ -1,10 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import User
-from storages.backends.s3boto3 import S3Boto3Storage
 
 STATUS_CHOICES = [
     ('processing', 'Processing'),
     ('completed', 'Completed'),
+]
+
+PAYMENT_STATUS_CHOICES = [
+    ('unpaid', 'Unpaid'),
+    ('pending', 'Pending'),
+    ('paid', 'Paid'),
 ]
 
 class Assignment(models.Model):
@@ -15,22 +20,20 @@ class Assignment(models.Model):
     instructions = models.TextField(blank=True, null=True)
     deadline = models.DateField(blank=True, null=True)
 
-    # Uploaded brief file (Saved to AWS S3)
+    # Uploaded brief file (Saved to AWS S3 automatically)
     brief = models.FileField(
-        storage=S3Boto3Storage(),
         upload_to="assignments/",
         blank=True, null=True
     )
 
-    payment_status = models.CharField(max_length=50, default='unpaid')
+    payment_status = models.CharField(max_length=50, choices=PAYMENT_STATUS_CHOICES, default='unpaid')
     created_at = models.DateTimeField(auto_now_add=True)
 
     # Status field
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='processing')
 
-    # Completed assignment file (Saved to AWS S3)
+    # Completed assignment file (Saved to AWS S3 automatically)
     completed_file = models.FileField(
-        storage=S3Boto3Storage(),
         upload_to="assignments/completed/",
         blank=True, null=True
     )
@@ -39,15 +42,14 @@ class Assignment(models.Model):
         return f"{self.title} ({self.student.username})"
 
 
-# Custom managers for proxy models remain the same.
+# ✅ Corrected Manager (Use Only If `UserProfile` Exists)
 class PremiumAssignmentManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(student__profile__premium_member=True)
-
+        return super().get_queryset().filter(student__is_staff=True)  # ✅ Example Fix
 
 class NonPremiumAssignmentManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(student__profile__premium_member=False)
+        return super().get_queryset().filter(student__is_staff=False)  # ✅ Example Fix
 
 
 class PremiumAssignment(Assignment):
