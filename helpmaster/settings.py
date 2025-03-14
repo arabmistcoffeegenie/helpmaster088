@@ -105,7 +105,7 @@ AWS_S3_OBJECT_PARAMETERS = {
 }
 
 # ✅ **Fixed Media Files URL**
-MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
+MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/".strip()
 
 # ✅ Stripe API Keys
 STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")
