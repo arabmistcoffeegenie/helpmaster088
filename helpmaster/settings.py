@@ -91,9 +91,9 @@ AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME", "eu-north-1")  # ✅ Defaul
 if not AWS_ACCESS_KEY_ID or not AWS_SECRET_ACCESS_KEY or not AWS_STORAGE_BUCKET_NAME:
     raise ValueError("AWS S3 credentials are missing!")
 
-# ✅ **Fixed AWS S3 Endpoint**
+# ✅ **Fixed AWS S3 URL Issue**
 AWS_S3_ENDPOINT_URL = f"https://s3.{AWS_S3_REGION_NAME}.amazonaws.com"
-AWS_S3_CUSTOM_DOMAIN = f"https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com"
+AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com"
 
 DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 AWS_S3_FILE_OVERWRITE = False
@@ -103,7 +103,7 @@ AWS_S3_OBJECT_PARAMETERS = {
 }
 
 # ✅ **Fixed Media Files URL**
-MEDIA_URL = f"{AWS_S3_CUSTOM_DOMAIN}/"
+MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
 
 # ✅ Stripe API Keys
 STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")
