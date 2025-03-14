@@ -3,8 +3,10 @@ from pathlib import Path
 import dj_database_url
 from dotenv import load_dotenv
 import logging
-logging.debug(f"Render AWS_S3_REGION_NAME: {os.getenv('AWS_S3_REGION_NAME')}")
-logging.debug(f"Render AWS_S3_ENDPOINT_URL: {os.getenv('AWS_S3_ENDPOINT_URL')}")
+logging.debug(f"Render AWS_S3_REGION_NAME: '{AWS_S3_REGION_NAME}'")
+logging.debug(f"Render AWS_S3_ENDPOINT_URL: '{AWS_S3_ENDPOINT_URL}'")
+logging.debug(f"Render AWS_S3_CUSTOM_DOMAIN: '{AWS_S3_CUSTOM_DOMAIN}'")
+
 
 # Load environment variables from .env file
 load_dotenv()
@@ -89,7 +91,7 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
 AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
-AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME", "eu-north-1")  # ✅ Default Region
+AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME", "eu-north-1").strip()
 
 if not AWS_ACCESS_KEY_ID or not AWS_SECRET_ACCESS_KEY or not AWS_STORAGE_BUCKET_NAME:
     raise ValueError("AWS S3 credentials are missing!")
