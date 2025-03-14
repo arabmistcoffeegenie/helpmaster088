@@ -2,6 +2,8 @@ import os
 from pathlib import Path
 import dj_database_url
 from dotenv import load_dotenv
+import logging
+logging.debug(f"Render AWS_S3_ENDPOINT_URL: {os.getenv('AWS_S3_ENDPOINT_URL')}")
 
 # Load environment variables from .env file
 load_dotenv()
@@ -92,7 +94,7 @@ if not AWS_ACCESS_KEY_ID or not AWS_SECRET_ACCESS_KEY or not AWS_STORAGE_BUCKET_
     raise ValueError("AWS S3 credentials are missing!")
 
 # ✅ **Fixed AWS S3 URL Issue**
-AWS_S3_ENDPOINT_URL = f"https://s3.{AWS_S3_REGION_NAME}.amazonaws.com"
+AWS_S3_ENDPOINT_URL = f"https://s3.{AWS_S3_REGION_NAME}.amazonaws.com".strip()
 AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com"
 
 DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
