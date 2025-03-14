@@ -1,14 +1,10 @@
 import os
+import logging
 from pathlib import Path
 import dj_database_url
 from dotenv import load_dotenv
-import logging
-logging.debug(f"Render AWS_S3_REGION_NAME: '{AWS_S3_REGION_NAME}'")
-logging.debug(f"Render AWS_S3_ENDPOINT_URL: '{AWS_S3_ENDPOINT_URL}'")
-logging.debug(f"Render AWS_S3_CUSTOM_DOMAIN: '{AWS_S3_CUSTOM_DOMAIN}'")
 
-
-# Load environment variables from .env file
+# ✅ Load environment variables from .env file
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -16,8 +12,38 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ✅ Security
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "your-default-secret-key")
 DEBUG = os.getenv("DEBUG", "False").lower() in ["true", "1", "yes"]
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",") if os.getenv("ALLOWED_HOSTS") else []
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",") if os.getenv("ALLOWED_HOSTS") else []
 CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",") if os.getenv("CSRF_TRUSTED_ORIGINS") else []
+
+# ✅ AWS S3 Storage Configuration
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
+AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME", "eu-north-1")
+
+# ✅ Ensure AWS credentials are present
+if not AWS_ACCESS_KEY_ID or not AWS_SECRET_ACCESS_KEY or not AWS_STORAGE_BUCKET_NAME:
+    raise ValueError("AWS S3 credentials are missing!")
+
+# ✅ Fixed AWS S3 Endpoint URL
+AWS_S3_ENDPOINT_URL = f"https://s3.{AWS_S3_REGION_NAME}.amazonaws.com"
+AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com"
+
+DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+AWS_S3_FILE_OVERWRITE = False
+AWS_QUERYSTRING_AUTH = False
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',
+}
+
+# ✅ Fixed Media Files URL
+MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
+
+# ✅ Debugging Logs (Moved after variable definitions)
+logging.basicConfig(level=logging.DEBUG)
+logging.debug(f"Render AWS_S3_REGION_NAME: '{AWS_S3_REGION_NAME}'")
+logging.debug(f"Render AWS_S3_ENDPOINT_URL: '{AWS_S3_ENDPOINT_URL}'")
+logging.debug(f"Render AWS_S3_CUSTOM_DOMAIN: '{AWS_S3_CUSTOM_DOMAIN}'")
 
 # ✅ Installed Apps
 INSTALLED_APPS = [
@@ -87,29 +113,6 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# ✅ AWS S3 Storage Configuration
-AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
-AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
-AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME", "eu-north-1").strip()
-
-if not AWS_ACCESS_KEY_ID or not AWS_SECRET_ACCESS_KEY or not AWS_STORAGE_BUCKET_NAME:
-    raise ValueError("AWS S3 credentials are missing!")
-
-# ✅ **Fixed AWS S3 URL Issue**
-AWS_S3_ENDPOINT_URL = f"https://s3.{AWS_S3_REGION_NAME}.amazonaws.com".strip()
-AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com".strip()
-
-DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
-AWS_S3_FILE_OVERWRITE = False
-AWS_QUERYSTRING_AUTH = False
-AWS_S3_OBJECT_PARAMETERS = {
-    'CacheControl': 'max-age=86400',
-}
-
-# ✅ **Fixed Media Files URL**
-MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/".strip()
-
 # ✅ Stripe API Keys
 STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")
 STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
@@ -142,10 +145,8 @@ LOGGING = {
 if not os.path.exists(BASE_DIR / "logs"):
     os.makedirs(BASE_DIR / "logs")
 
-# ✅ Debugging Logs
-import logging
+# ✅ Final Debugging Logs
 if DEBUG:
-    logging.basicConfig(level=logging.DEBUG)
     logging.debug(f"DEBUG Mode: {DEBUG}")
     logging.debug(f"Allowed Hosts: {ALLOWED_HOSTS}")
     logging.debug(f"AWS Access Key ID: {'SET' if AWS_ACCESS_KEY_ID else 'NOT SET'}")
