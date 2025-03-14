@@ -3,6 +3,7 @@ from pathlib import Path
 import dj_database_url
 from dotenv import load_dotenv
 import logging
+logging.debug(f"Render AWS_S3_REGION_NAME: {os.getenv('AWS_S3_REGION_NAME')}")
 logging.debug(f"Render AWS_S3_ENDPOINT_URL: {os.getenv('AWS_S3_ENDPOINT_URL')}")
 
 # Load environment variables from .env file
