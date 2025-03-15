@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'assignments',
     'jobs',
     'payments',
+    'pages',
     'storages',  # ✅ AWS S3 Storage
 ]
 
